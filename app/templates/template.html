@@ -19,8 +19,8 @@
 		<!-- Javascript imports -->
 		<!-- <script type='text/javascript' src="js/jquery-1.11.2.min.js') }}"></script> -->
 		<script type='text/javascript' src="{{ static_url('js/jquery-2.1.4.min.js') }}"></script>
-		<script type='text/javascript' src="{{ static_url('js/jquery.mobile-1.4.5.min.js') }}"></script>
-		<script>jQuery.noConflict();</script>
+		<!-- <script type='text/javascript' src="{{ static_url('js/jquery.mobile-1.4.5.min.js') }}"></script> -->
+		<!-- <script>jQuery.noConflict();</script> -->
 		
 		<!-- Cordova / PhoneGap imports [DISABLED] -->
 		<!-- TODO: Update Cordova to latest version and learn how to implement "swipes" from the cordova library -->
@@ -43,8 +43,16 @@
 			
 			<!-- LEVEL ONE OF DISPLAY -->
 			<div class="ui-grid-a">
+				<button onclick="postMount()"> Mount USB </button>
 				<button onclick="postCopy()"> Copy Data </button>
 				<button onclick="postUnmount()"> Unmount USB </button>
+			</div> <!-- end grid -->
+			
+			<div class="ui-grid-a">
+				<button onclick="postTub()"> Latest Tub Name </button>
+				<button onclick="postStartTraining()"> Start Training (RC) </button>
+				<button onclick="postStartModel()"> Start Model </button>
+				Model Name: <input type="text" name="model_name"> <br>
 			</div> <!-- end grid -->
 			
 			
@@ -76,23 +84,43 @@
 	
    </body>
    
-   <script type="text/javascript">
-	  $( document ).ready(function() {
-		console.log( "document ready!" );
-		driveHandler.load()
-	  });
-	  
+   <script type="text/javascript">	  
 	  var postCopy = function(){
 		// Send command (optional) to server
 		data = JSON.stringify({ 'command' : 'copy'})
 		console.log('copying data')
-		$.post('/copymount', data)
+		$.post('/copy', data)
 	  };
 	  var postUnmount = function(){
 		// Send command (optional) to server
 		data = JSON.stringify({ 'command' : 'unmount'})
 		console.log('USB unmounted')
 		$.post('/unmount', data)
-	  
+	  };
+	  var postMount = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'mount'})
+		console.log('USB mounted')
+		$.post('/mount', data)
+	  };
+	  var postTub = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'tub'})
+		console.log('Get latest tub')
+		$.post('/tub', data)
+	  };
+	  var postStartTraining = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'train'})
+		console.log('Start Training')
+		$.post('/train', data)
+	  };
+	  var postStartModel = function(){
+		// Send command (optional) to server
+		var model = document.getElementsByName("model_name");
+		data = JSON.stringify({ 'command' : 'ai', 'model' : model})
+		console.log('Start Model')
+		$.post('/model', data)
+	  };
 	</script>
  </html>

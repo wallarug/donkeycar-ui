@@ -22,9 +22,15 @@ import tornado.gen
 
 import config
 
+# for python3.8.0 windows
+# python-3.8.0a4
+import asyncio
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
+        data = {'latest_events' : self.application.console }
         self.render("template.html", data=data)
 
 
@@ -42,23 +48,53 @@ class LocalWebController(tornado.web.Application):
         handlers = [
             #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
             (r"/", MainHandler),
+            (r"/mount", MountAPI),
             (r"/copy", CopyAPI),
             (r"/unmount",UnmountAPI),
+            (r"/tub",TubAPI),
+            (r"/train",TrainAPI),
+            (r"/model",ModelAPI),
             
             (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": self.static_file_path}),
             #(r"/static/(.*)", tornado.web.StaticFileHandler, {'path': config.static_path}),
             # Add more paths here  tornado.web.StaticFileHandler, {'path': 'static/question1.html'}
         ]
 
-        settings = {'debug': True}
+        #settings = {'debug': True}
 
-        #settings = {
-        #    "template_path": config.TEMPLATE_PATH,
-        #    "static_path": config.STATIC_PATH,
-        #    "debug": True
-        #}
+        settings = {
+            "template_path": config.TEMPLATE_PATH,
+            "static_path": config.STATIC_PATH,
+            "debug": True
+        }
         #tornado.web.Application.__init__(self, handlers, **settings)
         super().__init__(handlers, **settings)
+
+    def update(self, port=8888):
+        ''' Start the tornado webserver. '''
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        print(port)
+        self.port = int(port)
+        self.listen(self.port)
+        tornado.ioloop.IOLoop.instance().start()
+
+
+
+class MountAPI(tornado.web.RequestHandler):
+
+    #def get(self):
+    #    data = {}
+    #    self.render("templates/vehicle.html", **data)
+    
+    def post(self):
+        '''
+        Receive post requests as user changes the angle
+        and throttle of the vehicle on a the index webpage
+        '''
+        #data = tornado.escape.json_decode(self.request.body)
+        #self.application.angle = data['angle']
+        print("Mounting USB")
+        ## TODO: @hans Run a script that mounts and copies
 
 
 class CopyAPI(tornado.web.RequestHandler):
@@ -74,7 +110,7 @@ class CopyAPI(tornado.web.RequestHandler):
         '''
         #data = tornado.escape.json_decode(self.request.body)
         #self.application.angle = data['angle']
-        
+        print("Copying Data to USB")
         ## TODO: @hans Run a script that mounts and copies
 
 
@@ -91,12 +127,62 @@ class UnmountAPI(tornado.web.RequestHandler):
         '''
         #data = tornado.escape.json_decode(self.request.body)
         #self.application.angle = data['angle']
-        
+        print("Unmounting USB")
+        ## TODO: @hans Run a script that unmounts
+
+
+class TubAPI(tornado.web.RequestHandler):
+
+    #def get(self):
+    #    data = {}
+    #    self.render("templates/vehicle.html", **data)
+    
+    def post(self):
+        '''
+        Receive post requests as user changes the angle
+        and throttle of the vehicle on a the index webpage
+        '''
+        #data = tornado.escape.json_decode(self.request.body)
+        #self.application.angle = data['angle']
+        print("latest Tub Name")
+        ## TODO: @hans Run a script that unmounts
+
+
+class TrainAPI(tornado.web.RequestHandler):
+
+    #def get(self):
+    #    data = {}
+    #    self.render("templates/vehicle.html", **data)
+    
+    def post(self):
+        '''
+        Receive post requests as user changes the angle
+        and throttle of the vehicle on a the index webpage
+        '''
+        #data = tornado.escape.json_decode(self.request.body)
+        #self.application.angle = data['angle']
+        print("Start Training")
+        ## TODO: @hans Run a script that unmounts
+
+
+class ModelAPI(tornado.web.RequestHandler):
+
+    #def get(self):
+    #    data = {}
+    #    self.render("templates/vehicle.html", **data)
+    
+    def post(self):
+        '''
+        Receive post requests as user changes the angle
+        and throttle of the vehicle on a the index webpage
+        '''
+        data = tornado.escape.json_decode(self.request.body)
+        #self.application.angle = data['angle']
+        print("Start Model")
+        model_name = data['model']
+        print("model name", model_name) 
         ## TODO: @hans Run a script that unmounts
         
 if __name__ == "__main__":
-    app = Application()
-    app.listen(config.port)
-    print "Starting tornado server on port %d" % (config.port)
-    print config.base_dir, config.STATIC_PATH, config.TEMPLATE_PATH
-    tornado.ioloop.IOLoop.instance().start()
+    lwc = LocalWebController()
+    lwc.update()
