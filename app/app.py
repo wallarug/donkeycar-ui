@@ -1,78 +1,98 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Nov 08 12:10:44 2019
 
-# Tornado app file
+@author: wallarug
 
+remotes.py
+
+The server to run remote commands needed to manage a car remotely. 
+"""
+
+import os
+import json
+import time
+import asyncio
+
+import requests
 import tornado.ioloop
 import tornado.web
-import os.path
+import tornado.gen
 
 import config
-
-from logparser import LogParser
 
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        # process the log file
-        statistics = LogParser()
-        # modify returned into something usable:
-        data = self.encap_data(statistics)
-        # render page
         self.render("template.html", data=data)
 
-    def encap_data(self, log):
-        # manually get everything ready...
-        status = log.find_currentstatus()
-        if status == 'd.conn':
-            status = "Connected"
-        elif status == 'r.conn':
-            status = "Connected"
-        elif status == 'f.conn':
-            status = "Disconnected"
-        else:
-            status = "Disconnected"
-
-        status_datetime = log.find_currentstatus_datetime()
-
-        # build the data data structure for the template...
-        data = {
-            'current_status' : status,
-            'current_status_datetime' : status_datetime[0:-5],
-            'num_fconn' : log.count_fconn,
-            'num_rconn' : log.count_rconn,
-            'num_dconn' : log.count_dconn,
-            'total_downtime' : log.get_dhms_string(log.total_downtime),
-            'avg_downtime' : log.find_avg_downtime(),
-            'med_downtime' : log.calc_median_down(),
-            'short_downtime' : log.find_shortest_downtime(),
-            'long_downtime' : log.find_longest_downtime(),
-            'total_uptime' : log.get_dhms_string(log.total_uptime),
-            'med_uptime' : log.calc_median_up(),
-            'avg_uptime' : log.find_avg_uptime(),
-            'short_uptime' : log.find_shortest_uptime(),
-            'long_uptime' : log.find_longest_uptime(),
-            'latest_events' : log.find_latest_events(10),
-            'records_since' : log.find_first_datetime()[0:-5],
-            'records_time' : log.calc_totaltime() }
-
-        # return the data structure.
-        return data
 
     
 # Set up the tornado application object
-class Application(tornado.web.Application):
+class LocalWebController(tornado.web.Application):
     def __init__(self):
+        print("Starting Server...")
+
+        this_dir = os.path.dirname(os.path.realpath(__file__))
+        self.static_file_path = os.path.join(this_dir, 'templates', 'static')
+
+        self.console = "no messages"
+        
         handlers = [
-            (r"/", MainHandler)
+            #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
+            (r"/", MainHandler),
+            (r"/copy", CopyAPI),
+            (r"/unmount",UnmountAPI),
+            
+            (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": self.static_file_path}),
             #(r"/static/(.*)", tornado.web.StaticFileHandler, {'path': config.static_path}),
             # Add more paths here  tornado.web.StaticFileHandler, {'path': 'static/question1.html'}
         ]
-        settings = {
-            "template_path": config.TEMPLATE_PATH,
-            "static_path": config.STATIC_PATH,
-            "debug": True
-        }
-        tornado.web.Application.__init__(self, handlers, **settings)
+
+        settings = {'debug': True}
+
+        #settings = {
+        #    "template_path": config.TEMPLATE_PATH,
+        #    "static_path": config.STATIC_PATH,
+        #    "debug": True
+        #}
+        #tornado.web.Application.__init__(self, handlers, **settings)
+        super().__init__(handlers, **settings)
+
+
+class CopyAPI(tornado.web.RequestHandler):
+
+    #def get(self):
+    #    data = {}
+    #    self.render("templates/vehicle.html", **data)
+    
+    def post(self):
+        '''
+        Receive post requests as user changes the angle
+        and throttle of the vehicle on a the index webpage
+        '''
+        #data = tornado.escape.json_decode(self.request.body)
+        #self.application.angle = data['angle']
+        
+        ## TODO: @hans Run a script that mounts and copies
+
+
+class UnmountAPI(tornado.web.RequestHandler):
+
+    #def get(self):
+    #    data = {}
+    #    self.render("templates/vehicle.html", **data)
+    
+    def post(self):
+        '''
+        Receive post requests as user changes the angle
+        and throttle of the vehicle on a the index webpage
+        '''
+        #data = tornado.escape.json_decode(self.request.body)
+        #self.application.angle = data['angle']
+        
+        ## TODO: @hans Run a script that unmounts
         
 if __name__ == "__main__":
     app = Application()
