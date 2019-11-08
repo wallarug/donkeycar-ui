@@ -1,0 +1,165 @@
+/*
+ Styles for RPi Hardware Guide (custom)
+
+*/
+
+/* Remove ellipsis */
+.ui-li-desc {
+	white-space: normal;
+}
+.ui-listview>li p {
+	white-space:normal;
+}
+.ui-listview>li>a.ui-btn{
+	white-space: normal;
+}
+/* Custom Styles */
+span{
+	text-align: center;
+	padding: 10px;
+	font-size: 12px;
+}
+span.link{
+	color: blue;
+	font-size: 14px;
+}
+.model img{
+	width: 300px;
+	padding: 0px;
+	border: 0px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+/* Removes Blue outline from map clicks */
+.model area{
+	outline: none;
+}
+.model p{
+	text-align: center;
+	padding: 10px;
+}
+.dynamo img{
+	width: 150px;
+	height: 150px;
+	border: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+.dynamo p{
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: justify;
+	margin-left: auto;
+	margin-right: auto;
+}
+.dynamo h4, div{
+	text-align: center;
+}
+p.center{
+	text-align: center;
+}
+.interactiveguides img{
+	width: 86px;
+	padding: 5px;
+	border: 0px;
+	vertical-align: middle;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+.interactiveguides a{
+	text-align: left;
+	vertical-align: middle;
+}
+
+.bootconfig p{
+	text-align: center;
+}
+
+.bootconfig table{
+	vertical-align: middle;
+	margin-left: auto;
+	margin-right: auto;
+}
+.bootconfig td, th{
+	padding: 5px;
+}
+p.align-left{
+	text-align: left;
+}
+
+.gpiodiagrams img{
+	width: 75%;
+	padding: 5px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.gallery img{
+	width: 90%;
+	padding: 5px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+
+/*
+  Custom CSS for tables
+*/
+.ui-table{
+
+}
+.my-custom-class th.ui-table-priority-1,
+.my-custom-class td.ui-table-priority-1,
+.my-custom-class th.ui-table-priority-2,
+.my-custom-class td.ui-table-priority-2,
+.my-custom-class th.ui-table-priority-3,
+.my-custom-class td.ui-table-priority-3,
+.my-custom-class th.ui-table-priority-4,
+.my-custom-class td.ui-table-priority-4,
+.my-custom-class th.ui-table-priority-5,
+.my-custom-class td.ui-table-priority-5  {
+display: none;
+text-align: center;
+vertical-align: middle;
+}
+/* Show priority 1 at 160px (10em x 16px) */
+@media screen and (min-width: 10em) {
+	.my-custom-class th.ui-table-priority-1,
+	.my-custom-class td.ui-table-priority-1 {
+		display: table-cell !important;
+}
+}
+/* Show priority 2 at 240px (15em x 16px) */
+@media screen and (min-width: 15em) {
+	.my-custom-class th.ui-table-priority-2,
+	.my-custom-class td.ui-table-priority-2 {
+		display: table-cell !important;
+}
+}
+/* Show priority 3 at 320px (20em x 16px) */
+@media screen and (min-width: 20em) {
+	.my-custom-class th.ui-table-priority-3,
+	.my-custom-class td.ui-table-priority-3 {
+		display: table-cell !important;
+}
+}
+/* Show priority 4 at 400px (25em x 16px) */
+@media screen and (min-width: 25em) {
+	.my-custom-class th.ui-table-priority-4,
+	.my-custom-class td.ui-table-priority-4 {
+		display: table-cell !important;
+}
+}
+/* Show priority 5 at 480px (30em x 16px) */
+@media screen and (min-width: 30em) {
+	.my-custom-class th.ui-table-priority-5,
+	.my-custom-class td.ui-table-priority-5 {
+		display: table-cell !important;
+}
+}
+

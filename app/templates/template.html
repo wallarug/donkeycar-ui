@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+   <head>
+		<!-- Page Title -->
+		<title> Network Analysis and Traffic Monitoring Tool </title>
+		
+		<!-- HTML Settings -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	  
+		<!-- CSS imports -->
+		<!-- <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css') }}" /> -->
+		<link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
+		<link rel="stylesheet" href="{{ static_url('css/RPiHWGuide-ThemeV9.min.css') }}"/>
+		<link rel="stylesheet" href="{{ static_url('css/jquery.mobile.icons.min.css') }}"/>
+		<link rel="stylesheet" href="{{ static_url('css/jquery.mobile.structure-1.4.5.min.css') }}"/>
+		<link rel="stylesheet" href="{{ static_url('css/styles.css') }}"/>
+		
+		<!-- Javascript imports -->
+		<!-- <script type='text/javascript' src="js/jquery-1.11.2.min.js') }}"></script> -->
+		<script type='text/javascript' src="{{ static_url('js/jquery-2.1.4.min.js') }}"></script>
+		<script type='text/javascript' src="{{ static_url('js/jquery.mobile-1.4.5.min.js') }}"></script>
+		<script>jQuery.noConflict();</script>
+		
+		<!-- Cordova / PhoneGap imports [DISABLED] -->
+		<!-- TODO: Update Cordova to latest version and learn how to implement "swipes" from the cordova library -->
+		<!--<script type='text/javascript' src="js/cordova/cordova-android.js') }}"></script>-->
+		
+   </head>
+   <body>
+   
+	<!-- JQuery page -->
+	<div data-role="page" id='home' data-theme="b">
+		<!-- page -- header -->
+		<div data-role="header">
+			<h1> Network Analysis and Traffic Monitoring Tool </h1>
+		</div>
+		
+		<!-- page -- main body -->
+		<div data-role="content">
+			<h1 class="header-banner">Network Analysis and Traffic Monitoring Tool</h1>
+			<br>
+			
+			<!-- LEVEL ONE OF DISPLAY -->
+			<div class="ui-grid-a">
+				<div class="ui-block-a">
+					<h2 class="ui-bar ui-bar-a"> Current Status </h2>
+					<div class="ui-body ui-body-a" >
+						<br />
+						<h3> {{ data['current_status'] }} </h3>
+						<p> Since: {{ data['current_status_datetime'] }} </p>
+						<br />
+					</div>
+				</div>
+				
+				<div class="ui-block-b">
+					<h2 class="ui-bar ui-bar-a"> Statistics </h2>
+					<div class="ui-body ui-body-a">
+						<p style="text-align: left;"> Since: {{ data['records_since'] }} ( {{ data['records_time'] }} ) </p>
+						<table data-role="table" data-mode="reflow" class="ui-responsive">
+							<thead>
+								<tr>
+									<th>  </th>
+									<th> Total </th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- Connection Details -->
+								<tr>
+									<th> Reconnections </th>
+									<td> {{ data['num_rconn'] }} </td>								
+								</tr>
+								<tr>
+									<th> Disconnections </th>
+									<td> {{ data['num_dconn'] }} </td>								
+								</tr>
+								<tr>
+									<th> Failed Connections </th>
+									<td> {{ data['num_fconn'] }} </td>									
+								</tr>
+							</tbody>
+						</table>
+						
+						<table data-role="table" data-mode="reflow" class="ui-responsive">
+							<thead>
+								<tr>
+									<th>  </th>
+									<th> Total </th>
+									<th> Average </th>
+									<th> Median </th>
+									<th> Shortest </th>
+									<th> Longest </th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- Down Time Stats -->
+								<tr>
+									<th> Down (Dead) Time </th>
+									<td> {{ data['total_downtime'] }} </td>
+									<td> {{ data['avg_downtime'] }} </td>
+									<td> {{ data['med_downtime'] }} </td>
+									<td> {{ data['short_downtime'] }} </td>
+									<td> {{ data['long_downtime'] }} </td>
+								</tr>
+								
+								<!-- Up Time Stats -->
+								<tr>
+									<th> Up (Live) Time </th>
+									<td> {{ data['total_uptime'] }} </td>
+									<td> {{ data['avg_uptime'] }} </td>
+									<td> {{ data['med_uptime'] }} </td>
+									<td> {{ data['short_uptime'] }} </td>
+									<td> {{ data['long_uptime'] }} </td>
+								</tr>
+							</tbody>
+						</table>
+					</div><!-- end group -->
+				</div> <!-- end block b -->
+			</div> <!-- end grid -->
+			
+			
+			<!-- LEVEL TWO OF DISPLAY -->
+			<div class="ui-grid-a">
+				
+
+				<h2 class="ui-bar ui-bar-a"> Latest Events </h2>
+				<div class="ui-body ui-body-a" style="text-align: left;"> 
+
+					{% for event in data['latest_events'] %}
+						<p> {{ event }} </p>
+					{% end %}
+
+				</div>
+
+			
+			</div> <!-- end grid -->
+			
+			<!-- LEVEL THREE OF DISPLAY -->
+			<div class="ui-grid-a">
+				<div class="ui-block-a">
+					<h2 class="ui-bar ui-bar-a"> Graph </h2>
+					<div class="ui-body ui-body-a"> 
+						<p> graph will go here... </p>
+					</div>
+				</div>
+				
+			</div> <!-- end grid -->
+			
+		</div><!-- /content -->
+		
+		<!-- page -- footer -->
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" style="text-align:center;">
+			<h5>Created by wallarug</h5>
+		</div>
+		<!-- /footer -->
+	</div>
+	
+   </body>
+ </html>
