@@ -33,89 +33,18 @@
 	<div data-role="page" id='home' data-theme="b">
 		<!-- page -- header -->
 		<div data-role="header">
-			<h1> Network Analysis and Traffic Monitoring Tool </h1>
+			<h1> Donkey Car Manager </h1>
 		</div>
 		
 		<!-- page -- main body -->
 		<div data-role="content">
-			<h1 class="header-banner">Network Analysis and Traffic Monitoring Tool</h1>
+			<h1 class="header-banner">Donkey Car Manager</h1>
 			<br>
 			
 			<!-- LEVEL ONE OF DISPLAY -->
 			<div class="ui-grid-a">
-				<div class="ui-block-a">
-					<h2 class="ui-bar ui-bar-a"> Current Status </h2>
-					<div class="ui-body ui-body-a" >
-						<br />
-						<h3> {{ data['current_status'] }} </h3>
-						<p> Since: {{ data['current_status_datetime'] }} </p>
-						<br />
-					</div>
-				</div>
-				
-				<div class="ui-block-b">
-					<h2 class="ui-bar ui-bar-a"> Statistics </h2>
-					<div class="ui-body ui-body-a">
-						<p style="text-align: left;"> Since: {{ data['records_since'] }} ( {{ data['records_time'] }} ) </p>
-						<table data-role="table" data-mode="reflow" class="ui-responsive">
-							<thead>
-								<tr>
-									<th>  </th>
-									<th> Total </th>
-								</tr>
-							</thead>
-							<tbody>
-								<!-- Connection Details -->
-								<tr>
-									<th> Reconnections </th>
-									<td> {{ data['num_rconn'] }} </td>								
-								</tr>
-								<tr>
-									<th> Disconnections </th>
-									<td> {{ data['num_dconn'] }} </td>								
-								</tr>
-								<tr>
-									<th> Failed Connections </th>
-									<td> {{ data['num_fconn'] }} </td>									
-								</tr>
-							</tbody>
-						</table>
-						
-						<table data-role="table" data-mode="reflow" class="ui-responsive">
-							<thead>
-								<tr>
-									<th>  </th>
-									<th> Total </th>
-									<th> Average </th>
-									<th> Median </th>
-									<th> Shortest </th>
-									<th> Longest </th>
-								</tr>
-							</thead>
-							<tbody>
-								<!-- Down Time Stats -->
-								<tr>
-									<th> Down (Dead) Time </th>
-									<td> {{ data['total_downtime'] }} </td>
-									<td> {{ data['avg_downtime'] }} </td>
-									<td> {{ data['med_downtime'] }} </td>
-									<td> {{ data['short_downtime'] }} </td>
-									<td> {{ data['long_downtime'] }} </td>
-								</tr>
-								
-								<!-- Up Time Stats -->
-								<tr>
-									<th> Up (Live) Time </th>
-									<td> {{ data['total_uptime'] }} </td>
-									<td> {{ data['avg_uptime'] }} </td>
-									<td> {{ data['med_uptime'] }} </td>
-									<td> {{ data['short_uptime'] }} </td>
-									<td> {{ data['long_uptime'] }} </td>
-								</tr>
-							</tbody>
-						</table>
-					</div><!-- end group -->
-				</div> <!-- end block b -->
+				<button onclick="postCopy()"> Copy Data </button>
+				<button onclick="postUnmount()"> Unmount USB </button>
 			</div> <!-- end grid -->
 			
 			
@@ -134,17 +63,7 @@
 
 			
 			</div> <!-- end grid -->
-			
-			<!-- LEVEL THREE OF DISPLAY -->
-			<div class="ui-grid-a">
-				<div class="ui-block-a">
-					<h2 class="ui-bar ui-bar-a"> Graph </h2>
-					<div class="ui-body ui-body-a"> 
-						<p> graph will go here... </p>
-					</div>
-				</div>
-				
-			</div> <!-- end grid -->
+
 			
 		</div><!-- /content -->
 		
@@ -156,4 +75,24 @@
 	</div>
 	
    </body>
+   
+   <script type="text/javascript">
+	  $( document ).ready(function() {
+		console.log( "document ready!" );
+		driveHandler.load()
+	  });
+	  
+	  var postCopy = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'copy'})
+		console.log('copying data')
+		$.post('/copymount', data)
+	  };
+	  var postUnmount = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'unmount'})
+		console.log('USB unmounted')
+		$.post('/unmount', data)
+	  
+	</script>
  </html>
