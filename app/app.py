@@ -12,7 +12,6 @@ The server to run remote commands needed to manage a car remotely.
 
 import os
 import json
-import time
 import asyncio
 
 import requests
@@ -25,6 +24,8 @@ from os import path, listdir
 import sys
 import subprocess
 from shutil import copyfile
+from time import sleep
+
 
 import config
 
@@ -52,7 +53,7 @@ def mount(device, mountpoint):
         sleep(1)
         results = terminal("mount {0} {1}".format(device, mountpoint))
         no_errors(results)
-        log_file.line(results[0])
+        #log_file.line(results[0])
         if(
             "mount:" not in str(results[0])
         ):
@@ -60,7 +61,15 @@ def mount(device, mountpoint):
         loops-=1
 
     if(not finished):
-        error("Error mounting {0}".format(mountpoint))
+        print("Error mounting {0}".format(mountpoint))
+
+
+def no_errors(command):
+    if command[1] == None:
+        return True
+    print('Error: ', command[1])
+    #raise Exception("Error: ", command[1])
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -129,7 +138,8 @@ class MountAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Mounting USB")
         ## TODO: @hans Run a script that mounts and copies
-        mount("/dev/sda", "/media/usb/")
+        #mount("/dev/sda1", "/home/pi/mycar/data")
+        terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
 
 
 class CopyAPI(tornado.web.RequestHandler):
@@ -147,7 +157,7 @@ class CopyAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Copying Data to USB")
         ## TODO: @hans Run a script that mounts and copies
-        terminal()
+        terminal("cp /home/pi/mycar/data/*.h5 /home/pi/mycar/pilot/")
         #copyfile("../board-undertest/code.py", "/media/circuitpython/code.py")
 
 
@@ -166,7 +176,7 @@ class UnmountAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Unmounting USB")
         ## TODO: @hans Run a script that unmounts
-        terminal()
+        terminal("sudo umount /home/pi/mycar/data")
 
 
 class TubAPI(tornado.web.RequestHandler):
@@ -184,11 +194,12 @@ class TubAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("latest Tub Name")
         ## TODO: @hans Run a script that unmounts
-        donkey_dir = ""
-        onlyfiles = [f for f in listdir(donkey_dir) if isfile(join(donkey_dir, f))]
-        data = {'tubs' : onlyfiles}
-        return self.render("templates/vehicle.html", **data)
-        terminal()
+        #donkey_dir = "/home/pi/mycar/pilot"
+        #onlyfiles = [f for f in listdir(donkey_dir) if isfile(join(donkey_dir, f))]
+        #print(onlyfiles)
+	##data = {'tubs' : onlyfiles}
+        #return self.render("templates/vehicle.html", **data)
+        #terminal()
 
 
 class TrainAPI(tornado.web.RequestHandler):
@@ -206,7 +217,7 @@ class TrainAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Start Training")
         ## TODO: @hans Run a script that unmounts
-        terminal()
+        terminal("python3 /home/pi/mycar/manage.py --js")
 
 
 class ModelAPI(tornado.web.RequestHandler):
