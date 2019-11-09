@@ -2,7 +2,7 @@
 <html>
    <head>
 		<!-- Page Title -->
-		<title> Network Analysis and Traffic Monitoring Tool </title>
+		<title> Donkey Car Manager - by Robotics Masters </title>
 		
 		<!-- HTML Settings -->
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -19,7 +19,7 @@
 		<!-- Javascript imports -->
 		<!-- <script type='text/javascript' src="js/jquery-1.11.2.min.js') }}"></script> -->
 		<script type='text/javascript' src="{{ static_url('js/jquery-2.1.4.min.js') }}"></script>
-		<!-- <script type='text/javascript' src="{{ static_url('js/jquery.mobile-1.4.5.min.js') }}"></script> -->
+		<script type='text/javascript' src="{{ static_url('js/jquery.mobile-1.4.5.min.js') }}"></script>
 		<!-- <script>jQuery.noConflict();</script> -->
 		
 		<!-- Cordova / PhoneGap imports [DISABLED] -->
@@ -63,15 +63,20 @@
 				<h2 class="ui-bar ui-bar-a"> Latest Events </h2>
 				<div class="ui-body ui-body-a" style="text-align: left;"> 
 
-					{% for event in data['latest_events'] %}
-						<p> {{ event }} </p>
-					{% end %}
-
 				</div>
 
 			
 			</div> <!-- end grid -->
-
+			
+			<div class="ui-field-contain">
+    				<label for="select-model">Models:</label>
+    				<select name="select-model" id="select-model">
+       					<option value="1">The 1st Option</option>
+        				<option value="2">The 2nd Option</option>
+        				<option value="3">The 3rd Option</option>
+        				<option value="4">The 4th Option</option>
+    				</select>
+			</div>
 			
 		</div><!-- /content -->
 		

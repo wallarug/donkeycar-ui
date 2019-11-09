@@ -46,24 +46,6 @@ def terminal(command):
     results = [stdout, stderr]
     return results
 
-def mount(device, mountpoint):
-    finished = False
-    loops = 5
-    while(not finished and loops > 0):
-        sleep(1)
-        results = terminal("mount {0} {1}".format(device, mountpoint))
-        no_errors(results)
-        #log_file.line(results[0])
-        if(
-            "mount:" not in str(results[0])
-        ):
-            finished = True
-        loops-=1
-
-    if(not finished):
-        print("Error mounting {0}".format(mountpoint))
-
-
 def no_errors(command):
     if command[1] == None:
         return True
@@ -73,8 +55,8 @@ def no_errors(command):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        data = {'latest_events' : self.application.console }
-        self.render("template.html", data=data)
+        #data = {'latest_events' : self.application.console }
+        self.render("template.html")#, data=data)
 
 
     
@@ -86,8 +68,9 @@ class LocalWebController(tornado.web.Application):
         this_dir = os.path.dirname(os.path.realpath(__file__))
         self.static_file_path = os.path.join(this_dir, 'templates', 'static')
 
-        self.console = "no messages"
-        
+        self.console = ["no messages"]
+        self.model_list = []
+
         handlers = [
             #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
             (r"/", MainHandler),
