@@ -2,7 +2,7 @@
 <html>
    <head>
 		<!-- Page Title -->
-		<title> Donkey Car Manager - by Robotics Masters </title>
+		<title> Donkey Car Manager - By Robotics Masters </title>
 		
 		<!-- HTML Settings -->
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -42,41 +42,48 @@
 			<br>
 			
 			<!-- LEVEL ONE OF DISPLAY -->
-			<div class="ui-grid-a">
+			<h3 class="header-banner">USB Drive Operations</h3>
+			<div data-role="controlgroup" data-type="horizontal">
 				<button onclick="postMount()"> Mount USB </button>
-				<button onclick="postCopy()"> Copy Data </button>
 				<button onclick="postUnmount()"> Unmount USB </button>
-			</div> <!-- end grid -->
-			
-			<div class="ui-grid-a">
-				<button onclick="postTub()"> Latest Tub Name </button>
-				<button onclick="postStartTraining()"> Start Training (RC) </button>
-				<button onclick="postStartModel()"> Start Model </button>
-				Model Name: <input type="text" name="model_name"> <br>
-			</div> <!-- end grid -->
-			
+			</div> <!-- end group -->
 			
 			<!-- LEVEL TWO OF DISPLAY -->
+			<h3 class="header-banner">Training Operations</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postStartTraining('rc')"> Begin Training </button>
+				<button onclick="postStartTraining('stop')"> Stop Training </button>
+			</div> <!-- end group -->
+
+			
+			<h3 class="header-banner">Tub Details</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postTub('name')"> Latest Tub Name </button>
+				<button onclick="postTub('frames')"> Latest Tub Frame Count </button>
+
+			</div> <!-- end group -->
+
+			<h3 class="header-banner">AI Commands</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postStartModel('refresh')"> Refresh List </button>
+				<button onclick="postStartModel('start')"> Start Model </button>
+
+
+			</div> <!-- end group -->
+			
+			<!-- LEVEL THREE OF DISPLAY -->
 			<div class="ui-grid-a">
 				
 
 				<h2 class="ui-bar ui-bar-a"> Latest Events </h2>
 				<div class="ui-body ui-body-a" style="text-align: left;"> 
 
+
 				</div>
 
 			
 			</div> <!-- end grid -->
-			
-			<div class="ui-field-contain">
-    				<label for="select-model">Models:</label>
-    				<select name="select-model" id="select-model">
-       					<option value="1">The 1st Option</option>
-        				<option value="2">The 2nd Option</option>
-        				<option value="3">The 3rd Option</option>
-        				<option value="4">The 4th Option</option>
-    				</select>
-			</div>
+
 			
 		</div><!-- /content -->
 		
@@ -90,40 +97,40 @@
    </body>
    
    <script type="text/javascript">	  
-	  var postCopy = function(){
+	  var postCopy = function(cmd){
 		// Send command (optional) to server
-		data = JSON.stringify({ 'command' : 'copy'})
+		data = JSON.stringify({ 'command' : cmd})
 		console.log('copying data')
 		$.post('/copy', data)
 	  };
 	  var postUnmount = function(){
 		// Send command (optional) to server
-		data = JSON.stringify({ 'command' : 'unmount'})
+		data = JSON.stringify({ 'command' : cmd})
 		console.log('USB unmounted')
 		$.post('/unmount', data)
 	  };
 	  var postMount = function(){
 		// Send command (optional) to server
-		data = JSON.stringify({ 'command' : 'mount'})
+		data = JSON.stringify({ 'command' : cmd})
 		console.log('USB mounted')
 		$.post('/mount', data)
 	  };
-	  var postTub = function(){
+	  var postTub = function(cmd){
 		// Send command (optional) to server
-		data = JSON.stringify({ 'command' : 'tub'})
+		data = JSON.stringify({ 'command' : cmd})
 		console.log('Get latest tub')
 		$.post('/tub', data)
 	  };
-	  var postStartTraining = function(){
+	  var postStartTraining = function(cmd){
 		// Send command (optional) to server
-		data = JSON.stringify({ 'command' : 'train'})
+		data = JSON.stringify({ 'command' : cmd})
 		console.log('Start Training')
 		$.post('/train', data)
 	  };
-	  var postStartModel = function(){
+	  var postStartModel = function(cmd){
 		// Send command (optional) to server
 		var model = document.getElementsByName("model_name");
-		data = JSON.stringify({ 'command' : 'ai', 'model' : model})
+		data = JSON.stringify({ 'command' : cmd, 'model' : model})
 		console.log('Start Model')
 		$.post('/model', data)
 	  };

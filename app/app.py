@@ -42,7 +42,7 @@ def terminal(command):
       stdout=subprocess.PIPE,
       stderr=subprocess.STDOUT
     )
-    stdout, stderr = MyOut.communicate(timeout=60)
+    stdout, stderr = MyOut.communicate(timeout=5)
     results = [stdout, stderr]
     return results
 
@@ -122,7 +122,7 @@ class MountAPI(tornado.web.RequestHandler):
         print("Mounting USB")
         ## TODO: @hans Run a script that mounts and copies
         #mount("/dev/sda1", "/home/pi/mycar/data")
-        terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
+        status = terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
 
 
 class CopyAPI(tornado.web.RequestHandler):
@@ -196,11 +196,15 @@ class TrainAPI(tornado.web.RequestHandler):
         Receive post requests as user changes the angle
         and throttle of the vehicle on a the index webpage
         '''
-        #data = tornado.escape.json_decode(self.request.body)
+        data = tornado.escape.json_decode(self.request.body)
+        print("data: ", data)
         #self.application.angle = data['angle']
-        print("Start Training")
-        ## TODO: @hans Run a script that unmounts
-        terminal("python3 /home/pi/mycar/manage.py --js")
+        if data['command'] == 'rc':
+            status = terminal("./scripts/train.sh")
+            print(status[0])
+        elif data['command'] == 'stop':
+            status = terminal("./scripts/stop.sh")
+            print(status[0])
 
 
 class ModelAPI(tornado.web.RequestHandler):
