@@ -184,6 +184,10 @@ class TubAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("latest Tub Name")
         ## TODO: @hans Run a script that unmounts
+        donkey_dir = ""
+        onlyfiles = [f for f in listdir(donkey_dir) if isfile(join(donkey_dir, f))]
+        data = {'tubs' : onlyfiles}
+        return self.render("templates/vehicle.html", **data)
         terminal()
 
 
