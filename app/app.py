@@ -20,13 +20,47 @@ import tornado.ioloop
 import tornado.web
 import tornado.gen
 
+from os.path import join, isdir, exists
+from os import path, listdir
+import sys
+import subprocess
+from shutil import copyfile
+
 import config
 
 # for python3.8.0 windows
 # python-3.8.0a4
 import asyncio
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+#asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+
+
+def terminal(command):
+    MyOut = subprocess.Popen(
+      command.split(" "),
+      stdout=subprocess.PIPE,
+      stderr=subprocess.STDOUT
+    )
+    stdout, stderr = MyOut.communicate(timeout=60)
+    results = [stdout, stderr]
+    return results
+
+def mount(device, mountpoint):
+    finished = False
+    loops = 5
+    while(not finished and loops > 0):
+        sleep(1)
+        results = terminal("mount {0} {1}".format(device, mountpoint))
+        no_errors(results)
+        log_file.line(results[0])
+        if(
+            "mount:" not in str(results[0])
+        ):
+            finished = True
+        loops-=1
+
+    if(not finished):
+        error("Error mounting {0}".format(mountpoint))
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -95,6 +129,7 @@ class MountAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Mounting USB")
         ## TODO: @hans Run a script that mounts and copies
+        mount("/dev/sda", "/media/usb/")
 
 
 class CopyAPI(tornado.web.RequestHandler):
@@ -112,6 +147,8 @@ class CopyAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Copying Data to USB")
         ## TODO: @hans Run a script that mounts and copies
+        terminal()
+        #copyfile("../board-undertest/code.py", "/media/circuitpython/code.py")
 
 
 class UnmountAPI(tornado.web.RequestHandler):
@@ -129,6 +166,7 @@ class UnmountAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Unmounting USB")
         ## TODO: @hans Run a script that unmounts
+        terminal()
 
 
 class TubAPI(tornado.web.RequestHandler):
@@ -146,6 +184,7 @@ class TubAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("latest Tub Name")
         ## TODO: @hans Run a script that unmounts
+        terminal()
 
 
 class TrainAPI(tornado.web.RequestHandler):
@@ -163,6 +202,7 @@ class TrainAPI(tornado.web.RequestHandler):
         #self.application.angle = data['angle']
         print("Start Training")
         ## TODO: @hans Run a script that unmounts
+        terminal()
 
 
 class ModelAPI(tornado.web.RequestHandler):
@@ -182,6 +222,7 @@ class ModelAPI(tornado.web.RequestHandler):
         model_name = data['model']
         print("model name", model_name) 
         ## TODO: @hans Run a script that unmounts
+        terminal()
         
 if __name__ == "__main__":
     lwc = LocalWebController()
