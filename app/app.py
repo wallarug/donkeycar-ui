@@ -200,7 +200,8 @@ class TrainAPI(tornado.web.RequestHandler):
         print("data: ", data)
         #self.application.angle = data['angle']
         if data['command'] == 'rc':
-            status = terminal("./scripts/train.sh")
+            status = terminal("python3 /home/pi/mycar/manage.py drive --js &")
+            #status = terminal("nohup /home/pi/mycar/manage.py drive --js &")
             print(status[0])
         elif data['command'] == 'stop':
             status = terminal("./scripts/stop.sh")
