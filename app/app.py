@@ -222,7 +222,9 @@ class TrainAPI(tornado.web.RequestHandler):
             #status = terminal("python3 /home/pi/mycar/manage.py drive --js &")
             self.application.tasks.append(terminal2("python3 /home/pi/mycar/manage.py drive --js"))
         elif data['command'] == 'stop':
-            self.application.tasks[0].kill()
+            for task in self.application.tasks:
+                task.kill()
+                del task
 
 
 class ModelAPI(tornado.web.RequestHandler):

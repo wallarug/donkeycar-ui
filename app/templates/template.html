@@ -77,7 +77,7 @@
 
 				<h2 class="ui-bar ui-bar-a"> Latest Events </h2>
 				<div class="ui-body ui-body-a" style="text-align: left;"> 
-
+					<p id="console"> </p>
 
 				</div>
 
@@ -107,12 +107,14 @@
 		// Send command (optional) to server
 		data = JSON.stringify({ 'command' : 'unmount'})
 		console.log('USB unmounted')
+		alert("Unmounted USB")
 		$.post('/unmount', data)
 	  };
 	  var postMount = function(){
 		// Send command (optional) to server
 		data = JSON.stringify({ 'command' : 'mount'})
 		console.log('USB mounted')
+		alert("Mounted USB")
 		$.post('/mount', data)
 	  };
 	  var postTub = function(cmd){
@@ -125,6 +127,11 @@
 		// Send command (optional) to server
 		data = JSON.stringify({ 'command' : cmd})
 		console.log('Start Training')
+		if (cmd == 'stop'){
+			alert("Stopping Training...")
+		}else{
+			alert("Starting Training...")
+		}
 		$.post('/train', data)
 	  };
 	  var postStartModel = function(cmd){
@@ -132,6 +139,7 @@
 		var model = document.getElementsByName("model_name");
 		data = JSON.stringify({ 'command' : cmd, 'model' : model})
 		console.log('Start Model')
+		alert("Starting Model...")
 		$.post('/model', data)
 	  };
 	</script>
