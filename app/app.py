@@ -226,7 +226,8 @@ class ModelAPI(tornado.web.RequestHandler):
         model_name = '/home/pi/mycar/pilot/pilot.h5'
         print("model name", model_name) 
         ## TODO: @hans Run a script that unmounts
-        terminal("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5")
+        status = terminal("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5 &")
+        print(status[0])
         
 if __name__ == "__main__":
     lwc = LocalWebController()
