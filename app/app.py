@@ -46,6 +46,24 @@ def terminal(command):
     results = [stdout, stderr]
     return results
 
+def terminal2(command):
+    p = subprocess.Popen(command.split(" "))
+    return p
+
+async def run(cmd):
+    proc = await asyncio.create_subprocess_shell(
+         cmd,
+         stdout=asyncio.subprocess.PIPE,
+         stderr=asyncio.subprocess.PIPE)
+    stdout, stderr = await proc.communicate()
+
+    print("{0} exited with {1}".format(cmd, proc.returncode))
+    if stdout:
+        print('[stdout]\n{0}'.format(stdout.decode()))
+    if stderr:
+        print('[stderr]\n{0}'.format(stderr.decode()))
+
+
 def no_errors(command):
     if command[1] == None:
         return True
@@ -70,6 +88,7 @@ class LocalWebController(tornado.web.Application):
 
         self.console = ["no messages"]
         self.model_list = []
+        self.tasks = []
 
         handlers = [
             #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
@@ -200,12 +219,10 @@ class TrainAPI(tornado.web.RequestHandler):
         print("data: ", data)
         #self.application.angle = data['angle']
         if data['command'] == 'rc':
-            status = terminal("python3 /home/pi/mycar/manage.py drive --js &")
-            #status = terminal("nohup /home/pi/mycar/manage.py drive --js &")
-            print(status[0])
+            #status = terminal("python3 /home/pi/mycar/manage.py drive --js &")
+            self.application.tasks.append(terminal2("python3 /home/pi/mycar/manage.py drive --js"))
         elif data['command'] == 'stop':
-            status = terminal("./scripts/stop.sh")
-            print(status[0])
+            self.application.tasks[0].kill()
 
 
 class ModelAPI(tornado.web.RequestHandler):
@@ -226,8 +243,7 @@ class ModelAPI(tornado.web.RequestHandler):
         model_name = '/home/pi/mycar/pilot/pilot.h5'
         print("model name", model_name) 
         ## TODO: @hans Run a script that unmounts
-        status = terminal("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5 &")
-        print(status[0])
+        self.application.tasks.append(terminal2("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5"))
         
 if __name__ == "__main__":
     lwc = LocalWebController()
