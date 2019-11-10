@@ -222,10 +222,11 @@ class ModelAPI(tornado.web.RequestHandler):
         data = tornado.escape.json_decode(self.request.body)
         #self.application.angle = data['angle']
         print("Start Model")
-        model_name = data['model']
+        #model_name = data['model']
+        model_name = '/home/pi/mycar/pilot/pilot.h5'
         print("model name", model_name) 
         ## TODO: @hans Run a script that unmounts
-        terminal()
+        terminal("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5")
         
 if __name__ == "__main__":
     lwc = LocalWebController()
