@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- HTML Settings -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="description" content="A Template HTML">
+    <meta name="author" content="Template Author">
+    
+    <!-- Page Title -->
+    <title> {{ title }} </title>
+    
+    <!-- CSS imports -->
+    <link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <ul>
+        {% for item in items %}
+            <li> {{ escape(item) }} </li>
+        {% end %}
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h1> A Container </h1>
+        <p> This is what a container looks like - it is a box that is indended. </p>
+    </div>
+    
+    <div class="container-fluid">
+        <h1> A Fluid Container </h1>
+        <p> This is what a fluid container looks like - it goes the full width of the page. </p>
+    </div>
+    
+    
+    <div class="container">
+        <div class="row">
+            <div class="col"> Column 1 </div>
+            <div class="col"> Column 2 </div>
+            <div class="col"> Column 3 </div>
+        </div>
+        
+        <div class="row">
+            <div class="col"> Column 1 </div>
+            <div class="col"> Column 2 </div>
+            <div class="col"> Column 3 </div>
+            <div class="col"> Column 4 </div>
+        </div>
+    </div>
+    
+    
+    <img src="{{ static_url('img/led.png') }}"> </img>
+
+    <!-- JS imports & code -->
+    <script src="{{ static_url('js/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ static_url('js/popper.min.js') }}"></script>
+    <script src="{{ static_url('js/bootstrap.min.js') }}"></script>
+    
+    <script type="text/javascript"> 
+    
+    </script>
+
+</body>
+ </html>

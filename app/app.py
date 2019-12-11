@@ -9,119 +9,97 @@ remotes.py
 
 The server to run remote commands needed to manage a car remotely. 
 """
-
-import os
-import json
-import asyncio
-
-import requests
 import tornado.ioloop
 import tornado.web
-import tornado.gen
+import asyncio
 
-from os.path import join, isdir, exists
-from os import path, listdir
-import sys
-import subprocess
-from shutil import copyfile
-from time import sleep
+from os.path import join, realpath, dirname
+import json
 
-
-import config
 
 # for python3.8.0 windows
 # python-3.8.0a4
 import asyncio
 #asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+## Variables for Application
+#import config
+PORT = 8888
+DEBUG = True
+
+## Paths
+APP_PATH = dirname(realpath(__file__))
+TEMPLATE_PATH = join(APP_PATH, 'templates')
+STATIC_PATH = join(APP_PATH, 'static')
 
 
-def terminal(command):
-    MyOut = subprocess.Popen(
-      command.split(" "),
-      stdout=subprocess.PIPE,
-      stderr=subprocess.STDOUT
-    )
-    stdout, stderr = MyOut.communicate(timeout=5)
-    results = [stdout, stderr]
-    return results
-
-def terminal2(command):
-    p = subprocess.Popen(command.split(" "))
-    return p
-
-async def run(cmd):
-    proc = await asyncio.create_subprocess_shell(
-         cmd,
-         stdout=asyncio.subprocess.PIPE,
-         stderr=asyncio.subprocess.PIPE)
-    stdout, stderr = await proc.communicate()
-
-    print("{0} exited with {1}".format(cmd, proc.returncode))
-    if stdout:
-        print('[stdout]\n{0}'.format(stdout.decode()))
-    if stderr:
-        print('[stderr]\n{0}'.format(stderr.decode()))
-
-
-def no_errors(command):
-    if command[1] == None:
-        return True
-    print('Error: ', command[1])
-    #raise Exception("Error: ", command[1])
-
-
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        #data = {'latest_events' : self.application.console }
-        self.render("template.html")#, data=data)
-
-
-    
-# Set up the tornado application object
-class LocalWebController(tornado.web.Application):
+## WebController Application Class
+##   This is used to make changing settings easier and high-levels of customising the settings
+##    that make the application run.
+class WebApp(tornado.web.Application):
     def __init__(self):
-        print("Starting Server...")
+        ## Set up all the application customised settings here for the webserver.  This is
+        ##  easier than having seperate variables to pass in.
 
-        this_dir = os.path.dirname(os.path.realpath(__file__))
-        self.static_file_path = os.path.join(this_dir, 'templates', 'static')
+        ## Settings
+        settings = {
+            "template_path": TEMPLATE_PATH,
+            "static_path": STATIC_PATH,
+            "static_url_prefix" : "/static/",
+            "debug": True,
+            "autoreload" : True        
+        }
 
-        self.console = ["no messages"]
-        self.model_list = []
-        self.tasks = []
-
+        ## Handlers
         handlers = [
-            #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
             (r"/", MainHandler),
-            (r"/mount", MountAPI),
-            (r"/copy", CopyAPI),
-            (r"/unmount",UnmountAPI),
-            (r"/tub",TubAPI),
-            (r"/train",TrainAPI),
-            (r"/model",ModelAPI),
-            
-            (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": self.static_file_path}),
-            #(r"/static/(.*)", tornado.web.StaticFileHandler, {'path': config.static_path}),
-            # Add more paths here  tornado.web.StaticFileHandler, {'path': 'static/question1.html'}
         ]
 
-        #settings = {'debug': True}
-
-        settings = {
-            "template_path": config.TEMPLATE_PATH,
-            "static_path": config.STATIC_PATH,
-            "debug": True
-        }
-        #tornado.web.Application.__init__(self, handlers, **settings)
+        ## Initialise the Application
         super().__init__(handlers, **settings)
 
-    def update(self, port=8888):
+    def start(self, port=8888):
         ''' Start the tornado webserver. '''
         asyncio.set_event_loop(asyncio.new_event_loop())
         print(port)
         self.port = int(port)
         self.listen(self.port)
         tornado.ioloop.IOLoop.instance().start()
+
+
+## Handler
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        items = ["Item 1", "Item 2", "Item 3"]
+        self.render("example.html", title="Sample", items=items)
+
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        print("data: ", data)
+
+        if data['command'] == 'console':
+            answer = 
+
+    
+# Set up the tornado application object
+##class LocalWebController(tornado.web.Application):
+##    def __init__(self):
+##        print("Starting Server...")
+##
+##        handlers = [
+##            #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
+##            (r"/", MainHandler),
+##            (r"/mount", MountAPI),
+##            (r"/copy", CopyAPI),
+##            (r"/unmount",UnmountAPI),
+##            (r"/tub",TubAPI),
+##            (r"/train",TrainAPI),
+##            (r"/model",ModelAPI),
+##            
+##            (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": self.static_file_path}),
+##            #(r"/static/(.*)", tornado.web.StaticFileHandler, {'path': config.static_path}),
+##            # Add more paths here  tornado.web.StaticFileHandler, {'path': 'static/question1.html'}
+##        ]
 
 
 
@@ -246,7 +224,10 @@ class ModelAPI(tornado.web.RequestHandler):
         print("model name", model_name) 
         ## TODO: @hans Run a script that unmounts
         self.application.tasks.append(terminal2("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5"))
-        
+
+
+## Run this when the file is opened.
 if __name__ == "__main__":
-    lwc = LocalWebController()
-    lwc.update()
+    app = WebApp()
+    app.start(PORT)
+
