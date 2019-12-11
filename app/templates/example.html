@@ -16,41 +16,69 @@
 </head>
 <body>
     <div class="container">
-        <ul>
-        {% for item in items %}
-            <li> {{ escape(item) }} </li>
-        {% end %}
-        </ul>
+        <h1> Donkey CC </h1>
     </div>
     
     <div class="container">
-        <h1> A Container </h1>
-        <p> This is what a container looks like - it is a box that is indended. </p>
-    </div>
-    
-    <div class="container-fluid">
-        <h1> A Fluid Container </h1>
-        <p> This is what a fluid container looks like - it goes the full width of the page. </p>
-    </div>
-    
-    
-    <div class="container">
-        <div class="row">
-            <div class="col"> Column 1 </div>
-            <div class="col"> Column 2 </div>
-            <div class="col"> Column 3 </div>
-        </div>
+        <h3> File Information </h3>
+        <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" onclick="post('usb/mount')"> 
+            Mount USB Drive
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" onclick="post('usb/unmount')"> 
+            Unmount USB Drive
+        </button>
+        <button type="button" class="btn btn-info" data-toggle="button" aria-pressed="false" onclick="post('tub/details')"> 
+            Latest Tub Details
+        </button>
+        <br />
+        <br />
         
-        <div class="row">
-            <div class="col"> Column 1 </div>
-            <div class="col"> Column 2 </div>
-            <div class="col"> Column 3 </div>
-            <div class="col"> Column 4 </div>
+        <h3> Training </h3>
+        <button type="button" class="btn btn-success" data-toggle="button" aria-pressed="false" onclick="post('train/start')"> 
+            Start Training
+        </button>
+        <button type="button" class="btn btn-info" data-toggle="button" aria-pressed="false" onclick="post('train/status')"> 
+            Status Update
+        </button>
+        <button type="button" class="btn btn-danger" data-toggle="button" aria-pressed="false" onclick="post('train/stop')"> 
+            Stop Training
+        </button>
+        
+        <br />
+        <br />
+        <h3> Models and AI </h3>
+        <button type="button" class="btn btn-success" data-toggle="button" aria-pressed="false" onclick="post('ai/start')"> 
+            Start Model (Default)
+        </button>
+        <button type="button" class="btn btn-info" data-toggle="button" aria-pressed="false" onclick="post('ai/list')"> 
+            List Avaiable Models
+        </button>
+        <button type="button" class="btn btn-success" data-toggle="button" aria-pressed="false" onclick="post('ai/custom')"> 
+            Start Selected Model (From List)
+        </button>
+        <button type="button" class="btn btn-info" data-toggle="button" aria-pressed="false" onclick="post('ai/status')"> 
+            Status Update
+        </button>
+        <button type="button" class="btn btn-danger" data-toggle="button" aria-pressed="false" onclick="post('ai/stop')"> 
+            Stop Model
+        </button>
+        
+        <div class="form-group">
+            <label class="d-inline-block" for="sel-model"> Model List (select one): </label>
+            <select class="d-inline-block form-control" style="max-width:50%" id="sel-model">
+                <option> No Model Selected </option>
+                {% for model in models %}
+                    <option> {{ escape(model) }} </option>
+                {% end %}
+            </select>
         </div>
     </div>
-    
-    
-    <img src="{{ static_url('img/led.png') }}"> </img>
+
+    <div class="container">
+        <h3> Console </h3>
+        <kbd></<kbd>
+    </div>
+
 
     <!-- JS imports & code -->
     <script src="{{ static_url('js/jquery-3.4.1.min.js') }}"></script>
@@ -58,7 +86,15 @@
     <script src="{{ static_url('js/bootstrap.min.js') }}"></script>
     
     <script type="text/javascript"> 
-    
+        var post = function(cmd){
+            // Send command (optional) to server
+            data = JSON.stringify({ 'command' : cmd})
+            res = $.post('/', data, function(result){
+                $("kdb").html(result['text']);
+            });
+        };
+        
+        
     </script>
 
 </body>

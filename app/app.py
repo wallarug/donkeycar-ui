@@ -70,15 +70,62 @@ class WebApp(tornado.web.Application):
 ## Handler
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        items = ["Item 1", "Item 2", "Item 3"]
-        self.render("example.html", title="Sample", items=items)
+        models = ["Item 1", "Item 2", "Item 3"]
+        self.render("example.html", title="Sample", models=models)
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        print("data: ", data)
+        print("data: ", data['command'])
+
+        result = "no action"
+
+        cmd = data['command']
+
+        ## USB Operations
+        if cmd == 'usb/mount':
+            # mount the USB drive
+            pass
+        elif cmd == 'usb/unmount':
+            # unmount the USB drive
+            pass
+
+        ## Tub and File operations
+        elif cmd == 'tub/details':
+            # get the latest information about the tubs on the server
+            pass
+
+        ## Training Operations
+        elif cmd == 'train/start':
+            pass
+
+        elif cmd == 'train/stop':
+            pass
+
+        elif cmd == 'train/status':
+            pass
+
+        ## AI Operations
+        elif cmd == 'ai/start':
+            pass
+
+        elif cmd == 'ai/stop':
+            pass
+
+        elif cmd == 'ai/status':
+            pass
+
+        elif cmd == 'ai/list':
+            pass
+
+        elif cmd == 'ai/custom':
+            pass
+        
 
         if data['command'] == 'console':
-            answer = 
+            text = 'hello world'
+            
+        self.set_header("Content-Type", "application/json")
+        self.write({'text': text})
 
     
 # Set up the tornado application object
