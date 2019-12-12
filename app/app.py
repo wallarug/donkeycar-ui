@@ -17,7 +17,7 @@ from os.path import join, realpath, dirname
 import json
 
 from subprocess import Popen, PIPE, STDOUT, TimeoutExpired, check_output
-
+import sys
 
 # for python3.8.0 windows
 # python-3.8.0a4
@@ -40,7 +40,7 @@ currentProcess = None
 def terminal(cmd):
     args = cmd.split(" ")
     global currentProcess
-    currentProcess = Popen(args, stdout = PIPE, stderr = STDOUT)
+    currentProcess = Popen(args, stdout=PIPE)
     #stdout, stderr = currentProcess.communicate(timeout=1)
     #print(stdout)
     #print(stderr)
@@ -54,9 +54,50 @@ def console():
         else:
             return "No process running!"
 
-    except TimeoutExpired:
+    except TimeoutExpired as e:
         print("TimeoutException: the process took too long to response.")
+        print(e.stdout)
         return "error: TimeoutException"
+
+def readconsole():
+    global currentProcess
+    count = 0
+    output = ""
+    try:
+        if currentProcess is not None and currentProcess.poll() == None:
+            output = ""
+            print("loop start")
+            print(currentProcess.stdout)
+            for line in currentProcess.stdout.readlines():
+                print(line)
+                if line == '' and count < 1:
+                    break
+                if line:
+                    output = output + line.strip() + '\n'
+                count += 1
+        return output
+    except Exception as e:
+        print("something went wrong. ", e)
+        return "Unknown Error"
+
+def readconsoleline():
+    global currentProcess
+    try:
+        if currentProcess is not None and currentProcess.poll() == None:
+           print(currentProcess.args)
+           print(currentProcess.stdout)
+           print(currentProcess.stderr)
+           print(currentProcess.pid)
+           print(currentProcess)
+           for ln in currentProcess.stdout.readlines():
+               print(ln)
+           #print(currentProcess.stdout)
+           #out = currentProcess.stdout.read()
+           #print(out)
+           #return out.decode('utf-8')
+    except Exception as e:
+        print("exception: ", e)
+        return "Unknown Error"
 
 def stop():
     try:
@@ -64,7 +105,8 @@ def stop():
             pid = currentProcess.pid
             currentProcess.terminate()
             code = currentProcess.returncode
-            text = "terminated process with pid {0} and return code {1}".format(pid, code)
+            out, err = currentProcess.communicate()
+            text = "terminated process with pid {0} and return code {1}\n{2}".format(pid, code, out)
             print(text)
             return text
         else:
@@ -140,14 +182,16 @@ class MainHandler(tornado.web.RequestHandler):
 
         ## Training Operations
         elif cmd == 'train/start':
-            terminal("python /home/pi/newcar/manage.py drive --js")
-            text = console()
+            #terminal("python /home/pi/newcar/manage.py drive --js")
+            #terminal("python /home/pi/newcar/manage.py drive")
+            terminal("python test.py")
+            text = "started!" #console()
 
         elif cmd == 'train/stop':
             text = stop()
 
         elif cmd == 'train/status':
-            text = console()
+            text = readconsoleline()
 
         ## AI Operations
         elif cmd == 'ai/start':
@@ -157,7 +201,7 @@ class MainHandler(tornado.web.RequestHandler):
             pass
 
         elif cmd == 'ai/status':
-            pass
+            text = console()
 
         elif cmd == 'ai/list':
             pass
