@@ -59,27 +59,6 @@ def console():
         #print(e.stdout)
         return "error: TimeoutException"
 
-def readconsole():
-    global currentProcess
-    count = 0
-    output = ""
-    try:
-        if currentProcess is not None and currentProcess.poll() == None:
-            output = ""
-            print("loop start")
-            print(currentProcess.stdout)
-            for line in currentProcess.stdout.readlines():
-                print(line)
-                if line == '' and count < 1:
-                    break
-                if line:
-                    output = output + line.strip() + '\n'
-                count += 1
-        return output
-    except Exception as e:
-        print("something went wrong. ", e)
-        return "Unknown Error"
-
 def readconsoleline():
     global currentProcess
     try:
@@ -187,9 +166,7 @@ class MainHandler(tornado.web.RequestHandler):
 
         ## Training Operations
         elif cmd == 'train/start':
-            #terminal("python /home/pi/newcar/manage.py drive --js")
-            #terminal("python /home/pi/newcar/manage.py drive")
-            terminal("python test.py")
+            terminal("python /home/pi/newcar/manage.py drive --js")
             text = "started!" #console()
 
         elif cmd == 'train/stop':
@@ -200,10 +177,10 @@ class MainHandler(tornado.web.RequestHandler):
 
         ## AI Operations
         elif cmd == 'ai/start':
-            pass
+            terminal("python /home/pi/newcar/manage.py drive --model=./model.h5")
 
         elif cmd == 'ai/stop':
-            pass
+            text = stop()
 
         elif cmd == 'ai/status':
             text = console()
