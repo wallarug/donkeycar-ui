@@ -40,7 +40,7 @@ currentProcess = None
 def terminal(cmd):
     args = cmd.split(" ")
     global currentProcess
-    currentProcess = Popen(args, stdout=PIPE)
+    currentProcess = Popen(args, stdout=PIPE, bufsize=0)
     #stdout, stderr = currentProcess.communicate(timeout=1)
     #print(stdout)
     #print(stderr)
@@ -89,8 +89,13 @@ def readconsoleline():
            print(currentProcess.stderr)
            print(currentProcess.pid)
            print(currentProcess)
-           for ln in currentProcess.stdout.readlines():
-               print(ln)
+           while True:
+               line = currentProcess.stdout.readline()
+               if not line:
+                   break
+               print(line)
+           #for ln in currentProcess.stdout.readline():
+           #    print(ln)
            #print(currentProcess.stdout)
            #out = currentProcess.stdout.read()
            #print(out)
