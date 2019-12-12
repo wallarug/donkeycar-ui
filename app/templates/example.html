@@ -76,7 +76,7 @@
 
     <div class="container">
         <h3> Console </h3>
-        <kbd></<kbd>
+        <kbd><span></span></<kbd>
     </div>
 
 
@@ -90,7 +90,7 @@
             // Send command (optional) to server
             data = JSON.stringify({ 'command' : cmd})
             res = $.post('/', data, function(result){
-                $("kdb").html(result['text']);
+                $("span").html(result['text'].replace(/\n/g, "<br />"));
             });
         };
         

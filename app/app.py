@@ -16,6 +16,8 @@ import asyncio
 from os.path import join, realpath, dirname
 import json
 
+from subprocess import Popen, PIPE, STDOUT, TimeoutExpired, check_output
+
 
 # for python3.8.0 windows
 # python-3.8.0a4
@@ -33,6 +35,46 @@ TEMPLATE_PATH = join(APP_PATH, 'templates')
 STATIC_PATH = join(APP_PATH, 'static')
 
 
+## Helper Function for dealing with running shell scripts
+currentProcess = None
+def terminal(cmd):
+    args = cmd.split(" ")
+    global currentProcess
+    currentProcess = Popen(args, stdout = PIPE, stderr = STDOUT)
+    #stdout, stderr = currentProcess.communicate(timeout=1)
+    #print(stdout)
+    #print(stderr)
+
+def console():
+    try:
+        if currentProcess is not None and currentProcess.poll() == None:
+            out, err = currentProcess.communicate(timeout=1)
+            print("stdout:", out)
+            return out.decode("utf-8")
+        else:
+            return "No process running!"
+
+    except TimeoutExpired:
+        print("TimeoutException: the process took too long to response.")
+        return "error: TimeoutException"
+
+def stop():
+    try:
+        if currentProcess is not None:
+            pid = currentProcess.pid
+            currentProcess.terminate()
+            code = currentProcess.returncode
+            text = "terminated process with pid {0} and return code {1}".format(pid, code)
+            print(text)
+            return text
+        else:
+            return "No process running!"
+    except TimeoutExpired:
+        print("TimeoutException: the process took too long to response.")
+        return "error: TimeoutException"
+
+
+
 ## WebController Application Class
 ##   This is used to make changing settings easier and high-levels of customising the settings
 ##    that make the application run.
@@ -47,7 +89,7 @@ class WebApp(tornado.web.Application):
             "static_path": STATIC_PATH,
             "static_url_prefix" : "/static/",
             "debug": True,
-            "autoreload" : True        
+            "autoreload" : True
         }
 
         ## Handlers
@@ -77,17 +119,19 @@ class MainHandler(tornado.web.RequestHandler):
         data = tornado.escape.json_decode(self.request.body)
         print("data: ", data['command'])
 
-        result = "no action"
+        result = "unknown command. no action"
 
         cmd = data['command']
 
         ## USB Operations
         if cmd == 'usb/mount':
             # mount the USB drive
-            pass
+            terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
+            text = console()
         elif cmd == 'usb/unmount':
             # unmount the USB drive
-            pass
+            terminal("sudo umount /home/pi/mycar/data")
+            text = console()
 
         ## Tub and File operations
         elif cmd == 'tub/details':
@@ -96,13 +140,14 @@ class MainHandler(tornado.web.RequestHandler):
 
         ## Training Operations
         elif cmd == 'train/start':
-            pass
+            terminal("python /home/pi/newcar/manage.py drive --js")
+            text = console()
 
         elif cmd == 'train/stop':
-            pass
+            text = stop()
 
         elif cmd == 'train/status':
-            pass
+            text = console()
 
         ## AI Operations
         elif cmd == 'ai/start':
