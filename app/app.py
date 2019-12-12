@@ -40,7 +40,7 @@ currentProcess = None
 def terminal(cmd):
     args = cmd.split(" ")
     global currentProcess
-    currentProcess = Popen(args, stdout=PIPE, bufsize=0)
+    currentProcess = Popen(args, stdout=PIPE, stderr=STDOUT)
     #stdout, stderr = currentProcess.communicate(timeout=1)
     #print(stdout)
     #print(stderr)
@@ -56,7 +56,7 @@ def console():
 
     except TimeoutExpired as e:
         print("TimeoutException: the process took too long to response.")
-        print(e.stdout)
+        #print(e.stdout)
         return "error: TimeoutException"
 
 def readconsole():
@@ -89,6 +89,7 @@ def readconsoleline():
            print(currentProcess.stderr)
            print(currentProcess.pid)
            print(currentProcess)
+           print(currentProcess.stdout.read())
            while True:
                line = currentProcess.stdout.readline()
                if not line:
@@ -110,8 +111,7 @@ def stop():
             pid = currentProcess.pid
             currentProcess.terminate()
             code = currentProcess.returncode
-            out, err = currentProcess.communicate()
-            text = "terminated process with pid {0} and return code {1}\n{2}".format(pid, code, out)
+            text = "terminated process with pid {0} and return code {1}\n".format(pid, code)
             print(text)
             return text
         else:
