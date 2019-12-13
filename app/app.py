@@ -64,31 +64,6 @@ def console():
         #print(e.stdout)
         return "error: TimeoutException"
 
-def readconsoleline():
-    global currentProcess
-    try:
-        if currentProcess is not None and currentProcess.poll() == None:
-           print(currentProcess.args)
-           print(currentProcess.stdout)
-           print(currentProcess.stderr)
-           print(currentProcess.pid)
-           print(currentProcess)
-           print(currentProcess.stdout.read())
-           while True:
-               line = currentProcess.stdout.readline()
-               if not line:
-                   break
-               print(line)
-           #for ln in currentProcess.stdout.readline():
-           #    print(ln)
-           #print(currentProcess.stdout)
-           #out = currentProcess.stdout.read()
-           #print(out)
-           #return out.decode('utf-8')
-    except Exception as e:
-        print("exception: ", e)
-        return "Unknown Error"
-
 def stop():
     try:
         if currentProcess is not None:
