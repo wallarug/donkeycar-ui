@@ -60,9 +60,15 @@ def console():
             return "No process running!"
 
     except TimeoutExpired as e:
-        print("TimeoutException: the process took too long to response.")
-        #print(e.stdout)
-        return "error: TimeoutException"
+        print("TimeoutException: the process took too long to respond.")
+        if currentProcess.poll() == None:
+            return "still running with PID {0} but unable to read stdout. error: TimeoutException.".format(currentProcess.pid())
+
+def status():
+    try:
+        if currentProcess is not None and currentProcess.poll() == None:
+        else:
+            return "No process running!"
 
 def stop():
     try:
@@ -76,7 +82,7 @@ def stop():
         else:
             return "No process running!"
     except TimeoutExpired:
-        print("TimeoutException: the process took too long to response.")
+        print("TimeoutException: the process took too long to respond.")
         return "error: TimeoutException"
 
 
@@ -139,8 +145,7 @@ class MainHandler(tornado.web.RequestHandler):
             text = console()
         elif cmd == 'usb/unmount':
             # unmount the USB drive
-            path = join(DONKEY_PATH, 'data')
-            terminal("sudo umount " + path)
+            terminal("sudo umount " + DONKEY_PATH + "data")
             text = console()
 
         ## Tub and File operations
@@ -171,7 +176,7 @@ class MainHandler(tornado.web.RequestHandler):
             text = stop()
 
         elif cmd == 'train/status':
-            text = "use: Latest Tub Details"
+            text = console()
 
         ## AI Operations
         elif cmd == 'ai/start':
@@ -182,7 +187,7 @@ class MainHandler(tornado.web.RequestHandler):
             text = stop()
 
         elif cmd == 'ai/status':
-            text = "not implemented"
+            text = console()
 
         elif cmd == 'ai/list':
             pass
