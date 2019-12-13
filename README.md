@@ -8,3 +8,6 @@ Use the same enviroment `(env) pi@donkeycar:~/` as the Donkey Car Platform for r
 ```
 python app.py
 ```
+
+## Customise
+You can customise the DONKEY_PATH and other variables in the top of `app.py` under the `Paths` comment.
