@@ -51,7 +51,7 @@
             Start Model (Default)
         </button>
         <button type="button" class="btn btn-info" data-toggle="button" aria-pressed="false" onclick="post('ai/list')"> 
-            List Avaiable Models
+            List Available  Models
         </button>
         <button type="button" class="btn btn-success" data-toggle="button" aria-pressed="false" onclick="post('ai/custom')"> 
             Start Selected Model (From List)
@@ -76,7 +76,7 @@
 
     <div class="container">
         <h3> Console </h3>
-        <kbd><span></span></<kbd>
+        <kbd><span style="white-space: pre-wrap"></span></<kbd>
     </div>
 
 
@@ -90,7 +90,7 @@
             // Send command (optional) to server
             data = JSON.stringify({ 'command' : cmd})
             res = $.post('/', data, function(result){
-                $("span").html(result['text'].replace(/\n/g, "<br />"));
+                $("span").html(result['text']); //.replace(/\n/g, "&#13;&#10"));
             });
         };
         

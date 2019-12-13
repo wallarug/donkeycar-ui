@@ -33,6 +33,10 @@ DEBUG = True
 APP_PATH = dirname(realpath(__file__))
 TEMPLATE_PATH = join(APP_PATH, 'templates')
 STATIC_PATH = join(APP_PATH, 'static')
+DONKEY_PATH = '/home/pi/newcar/'
+USB_DEVICE = '/dev/sda1'
+
+#FILE = open('output.txt', 'r+')
 
 
 ## Helper Function for dealing with running shell scripts
@@ -152,17 +156,35 @@ class MainHandler(tornado.web.RequestHandler):
         ## USB Operations
         if cmd == 'usb/mount':
             # mount the USB drive
-            terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
+            path = join(DONKEY_PATH, 'data')
+            command = "sudo mount " + USB_DEVICE + " " + path
+            terminal(command)
+            #terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
             text = console()
         elif cmd == 'usb/unmount':
             # unmount the USB drive
-            terminal("sudo umount /home/pi/mycar/data")
+            path = join(DONKEY_PATH, 'data')
+            terminal("sudo umount " + path)
             text = console()
 
         ## Tub and File operations
         elif cmd == 'tub/details':
             # get the latest information about the tubs on the server
-            pass
+            # tub folder
+            path = join(DONKEY_PATH, 'data')
+            terminal("ls " + path + " -1t")
+            folder = check_output(["head", "-1"], stdin=currentProcess.stdout, text=True)
+            # latest file
+            path = join(path, folder.strip())
+            terminal("ls " + path + " -1t")
+            latest = check_output(["head", "-1"], stdin=currentProcess.stdout, text=True)
+            # file count
+            terminal("ls " + path + " -l wc -l")
+            lines = check_output(["wc", "-l"], stdin=currentProcess.stdout, text=True)
+            lines = int((int(lines) / 2) - 2)
+            # return
+            print(folder, latest, lines)
+            text = "Tub Name: {0}\nLatest File: {1}\nNumber of Images: {2}".format(folder, latest, lines)
 
         ## Training Operations
         elif cmd == 'train/start':
@@ -173,7 +195,11 @@ class MainHandler(tornado.web.RequestHandler):
             text = stop()
 
         elif cmd == 'train/status':
-            text = readconsoleline()
+            FILE.flush()
+            text = FILE.read()
+            #text = check_output(["tail", "output.txt"])
+            print(text)
+            #text = text.decode("utf-8")
 
         ## AI Operations
         elif cmd == 'ai/start':
