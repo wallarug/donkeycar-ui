@@ -34,6 +34,7 @@ APP_PATH = dirname(realpath(__file__))
 TEMPLATE_PATH = join(APP_PATH, 'templates')
 STATIC_PATH = join(APP_PATH, 'static')
 DONKEY_PATH = '/home/pi/newcar/'
+DONKEY_MODEL = 'pilot.h5'
 USB_DEVICE = '/dev/sda1'
 
 #FILE = open('output.txt', 'r+')
@@ -172,15 +173,15 @@ class MainHandler(tornado.web.RequestHandler):
             # get the latest information about the tubs on the server
             # tub folder
             path = join(DONKEY_PATH, 'data')
-            terminal("ls " + path + " -1t")
-            folder = check_output(["head", "-1"], stdin=currentProcess.stdout, text=True)
+            cmd = Popen(["ls", path, "-1t"], stdout=PIPE, stderr=STDOUT)
+            folder = check_output(["head", "-1"], stdin=cmd.stdout, text=True)
             # latest file
             path = join(path, folder.strip())
-            terminal("ls " + path + " -1t")
-            latest = check_output(["head", "-1"], stdin=currentProcess.stdout, text=True)
+            cmd = Popen(["ls", path, "-1t"], stdout=PIPE, stderr=STDOUT)
+            latest = check_output(["head", "-1"], stdin=cmd.stdout, text=True)
             # file count
-            terminal("ls " + path + " -l wc -l")
-            lines = check_output(["wc", "-l"], stdin=currentProcess.stdout, text=True)
+            cmd = Popen(["ls", path, "-l"], stdout=PIPE, stderr=STDOUT)
+            lines = check_output(["wc", "-l"], stdin=cmd.stdout, text=True)
             lines = int((int(lines) / 2) - 2)
             # return
             print(folder, latest, lines)
@@ -199,7 +200,8 @@ class MainHandler(tornado.web.RequestHandler):
 
         ## AI Operations
         elif cmd == 'ai/start':
-            terminal("python " + DONKEY_PATH + "manage.py drive --model=" + DONKEY_PATH + "/pilot/pilot.h5")
+            terminal("python " + DONKEY_PATH + "manage.py drive --model=" + DONKEY_PATH + "/pilot/" + DONKEY_MODEL)
+            text = "started! Model: " + DONKEY_MODEL
 
         elif cmd == 'ai/stop':
             text = stop()
@@ -212,11 +214,10 @@ class MainHandler(tornado.web.RequestHandler):
 
         elif cmd == 'ai/custom':
             pass
-        
 
         if data['command'] == 'console':
             text = 'hello world'
-            
+        
         self.set_header("Content-Type", "application/json")
         self.write({'text': text})
 
