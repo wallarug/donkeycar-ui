@@ -188,28 +188,24 @@ class MainHandler(tornado.web.RequestHandler):
 
         ## Training Operations
         elif cmd == 'train/start':
-            terminal("python /home/pi/newcar/manage.py drive --js")
+            terminal("python " + DONKEY_PATH + "manage.py drive --js")
             text = "started!" #console()
 
         elif cmd == 'train/stop':
             text = stop()
 
         elif cmd == 'train/status':
-            FILE.flush()
-            text = FILE.read()
-            #text = check_output(["tail", "output.txt"])
-            print(text)
-            #text = text.decode("utf-8")
+            text = "use: Latest Tub Details"
 
         ## AI Operations
         elif cmd == 'ai/start':
-            terminal("python /home/pi/newcar/manage.py drive --model=./model.h5")
+            terminal("python " + DONKEY_PATH + "manage.py drive --model=" + DONKEY_PATH + "/pilot/pilot.h5")
 
         elif cmd == 'ai/stop':
             text = stop()
 
         elif cmd == 'ai/status':
-            text = console()
+            text = "not implemented"
 
         elif cmd == 'ai/list':
             pass
@@ -224,154 +220,8 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
         self.write({'text': text})
 
-    
-# Set up the tornado application object
-##class LocalWebController(tornado.web.Application):
-##    def __init__(self):
-##        print("Starting Server...")
-##
-##        handlers = [
-##            #(r"/", tornado.web.RedirectHandler, dict(url="/drive")),
-##            (r"/", MainHandler),
-##            (r"/mount", MountAPI),
-##            (r"/copy", CopyAPI),
-##            (r"/unmount",UnmountAPI),
-##            (r"/tub",TubAPI),
-##            (r"/train",TrainAPI),
-##            (r"/model",ModelAPI),
-##            
-##            (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": self.static_file_path}),
-##            #(r"/static/(.*)", tornado.web.StaticFileHandler, {'path': config.static_path}),
-##            # Add more paths here  tornado.web.StaticFileHandler, {'path': 'static/question1.html'}
-##        ]
-
-
-
-class MountAPI(tornado.web.RequestHandler):
-
-    #def get(self):
-    #    data = {}
-    #    self.render("templates/vehicle.html", **data)
-    
-    def post(self):
-        '''
-        Receive post requests as user changes the angle
-        and throttle of the vehicle on a the index webpage
-        '''
-        #data = tornado.escape.json_decode(self.request.body)
-        #self.application.angle = data['angle']
-        print("Mounting USB")
-        ## TODO: @hans Run a script that mounts and copies
-        #mount("/dev/sda1", "/home/pi/mycar/data")
-        status = terminal("sudo mount /dev/sda1 /home/pi/mycar/data")
-
-
-class CopyAPI(tornado.web.RequestHandler):
-
-    #def get(self):
-    #    data = {}
-    #    self.render("templates/vehicle.html", **data)
-    
-    def post(self):
-        '''
-        Receive post requests as user changes the angle
-        and throttle of the vehicle on a the index webpage
-        '''
-        #data = tornado.escape.json_decode(self.request.body)
-        #self.application.angle = data['angle']
-        print("Copying Data to USB")
-        ## TODO: @hans Run a script that mounts and copies
-        terminal("cp /home/pi/mycar/data/*.h5 /home/pi/mycar/pilot/")
-        #copyfile("../board-undertest/code.py", "/media/circuitpython/code.py")
-
-
-class UnmountAPI(tornado.web.RequestHandler):
-
-    #def get(self):
-    #    data = {}
-    #    self.render("templates/vehicle.html", **data)
-    
-    def post(self):
-        '''
-        Receive post requests as user changes the angle
-        and throttle of the vehicle on a the index webpage
-        '''
-        #data = tornado.escape.json_decode(self.request.body)
-        #self.application.angle = data['angle']
-        print("Unmounting USB")
-        ## TODO: @hans Run a script that unmounts
-        terminal("sudo umount /home/pi/mycar/data")
-
-
-class TubAPI(tornado.web.RequestHandler):
-
-    #def get(self):
-    #    data = {}
-    #    self.render("templates/vehicle.html", **data)
-    
-    def post(self):
-        '''
-        Receive post requests as user changes the angle
-        and throttle of the vehicle on a the index webpage
-        '''
-        #data = tornado.escape.json_decode(self.request.body)
-        #self.application.angle = data['angle']
-        print("latest Tub Name")
-        ## TODO: @hans Run a script that unmounts
-        #donkey_dir = "/home/pi/mycar/pilot"
-        #onlyfiles = [f for f in listdir(donkey_dir) if isfile(join(donkey_dir, f))]
-        #print(onlyfiles)
-	##data = {'tubs' : onlyfiles}
-        #return self.render("templates/vehicle.html", **data)
-        #terminal()
-
-
-class TrainAPI(tornado.web.RequestHandler):
-
-    #def get(self):
-    #    data = {}
-    #    self.render("templates/vehicle.html", **data)
-    
-    def post(self):
-        '''
-        Receive post requests as user changes the angle
-        and throttle of the vehicle on a the index webpage
-        '''
-        data = tornado.escape.json_decode(self.request.body)
-        print("data: ", data)
-        #self.application.angle = data['angle']
-        if data['command'] == 'rc':
-            #status = terminal("python3 /home/pi/mycar/manage.py drive --js &")
-            self.application.tasks.append(terminal2("python3 /home/pi/mycar/manage.py drive --js"))
-        elif data['command'] == 'stop':
-            for task in self.application.tasks:
-                task.kill()
-                del task
-
-
-class ModelAPI(tornado.web.RequestHandler):
-
-    #def get(self):
-    #    data = {}
-    #    self.render("templates/vehicle.html", **data)
-    
-    def post(self):
-        '''
-        Receive post requests as user changes the angle
-        and throttle of the vehicle on a the index webpage
-        '''
-        data = tornado.escape.json_decode(self.request.body)
-        #self.application.angle = data['angle']
-        print("Start Model")
-        #model_name = data['model']
-        model_name = '/home/pi/mycar/pilot/pilot.h5'
-        print("model name", model_name) 
-        ## TODO: @hans Run a script that unmounts
-        self.application.tasks.append(terminal2("python3 /home/pi/mycar/manage.py drive --model /home/pi/mycar/pilot/pilot.h5"))
-
 
 ## Run this when the file is opened.
 if __name__ == "__main__":
     app = WebApp()
     app.start(PORT)
-
