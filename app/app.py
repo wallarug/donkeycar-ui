@@ -37,6 +37,7 @@ DONKEY_PATH = '/home/pi/newcar/'
 DONKEY_MODEL = 'pilot.h5'
 USB_DEVICE = '/dev/sda1'
 
+models = []
 #FILE = open('output.txt', 'r+')
 
 
@@ -118,7 +119,7 @@ class WebApp(tornado.web.Application):
 ## Handler
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        models = ["Item 1", "Item 2", "Item 3"]
+        global models
         self.render("example.html", title="Sample", models=models)
 
     def post(self):
@@ -126,7 +127,7 @@ class MainHandler(tornado.web.RequestHandler):
         print("data: ", data['command'])
 
         result = "unknown command. no action"
-
+        refresh = ""
         cmd = data['command']
 
         ## USB Operations
@@ -184,17 +185,26 @@ class MainHandler(tornado.web.RequestHandler):
             text = console()
 
         elif cmd == 'ai/list':
-            pass
-
+            global models
+            path = DONKEY_PATH + "models/"
+            text, err = Popen(["ls", path], stdout=PIPE, stderr=STDOUT, text=True).communicate(timeout=1)
+            models = text.strip().split("\n")
+            refresh = "true"
         elif cmd == 'ai/custom':
-            pass
+            model = data['model']
+            if model and (model in models):
+                print(model)
+                terminal("python " + DONKEY_PATH + "manage.py drive --model " + DONKEY_PATH + "models/" + model)
+                text = "started!"
+            else:
+                text = "model does not exist!  not starting."
 
         if data['command'] == 'console':
             text = 'hello world'
-        
-        self.set_header("Content-Type", "application/json")
-        self.write({'text': text})
 
+        self.set_header("Content-Type", "application/json")
+        self.write({'text': text, 'refresh': refresh})
+        refresh = ""
 
 ## Run this when the file is opened.
 if __name__ == "__main__":
