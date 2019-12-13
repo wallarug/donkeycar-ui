@@ -62,13 +62,7 @@ def console():
     except TimeoutExpired as e:
         print("TimeoutException: the process took too long to respond.")
         if currentProcess.poll() == None:
-            return "still running with PID {0} but unable to read stdout. error: TimeoutException.".format(currentProcess.pid())
-
-def status():
-    try:
-        if currentProcess is not None and currentProcess.poll() == None:
-        else:
-            return "No process running!"
+            return "still running with PID {0} but unable to read stdout. error: TimeoutException.".format(currentProcess.pid)
 
 def stop():
     try:
