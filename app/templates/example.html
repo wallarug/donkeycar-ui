@@ -97,7 +97,7 @@
                 data = JSON.stringify({'command' : cmd})
             }
             res = $.post('/', data, function(result){
-                $("span").html(result['text']); //.replace(/\n/g, "&#13;&#10"));
+                $("span").html(result['text'].replace(/\n$/, "")); //.replace(/\n/g, "&#13;&#10"));
                 if ( result['refresh'] == "true") {
                     window.location.reload();
                 }
